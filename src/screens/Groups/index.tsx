@@ -28,6 +28,7 @@ export function Groups() {
             message='Nenhum grupo cadastrado' 
           />
         }
+        showsVerticalScrollIndicator={false}
       />
 
     <Button title='Criar novo Grupo' type='PRIMARY' />

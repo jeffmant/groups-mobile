@@ -6,11 +6,19 @@ import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
 import { FlatList } from "react-native";
 import { useState } from "react";
+import { UserCard } from "@components/UserCard";
+import { ListEmpty } from "@components/ListEmpty";
+import { Button } from "@components/Button";
 
 
 export function Users () {
   const [groups, setGroups] = useState(['Grupo A', 'Grupo B'])
   const [seletedGroup, setSelectedGroup] = useState(groups[0])
+
+  const [users, setUsers] = useState([
+    'Jefferson', 
+    'Gabriel',
+  ])
   
   return (
     <Container>
@@ -35,12 +43,36 @@ export function Users () {
             />
           )}
           horizontal={true}
+          showsHorizontalScrollIndicator={false}
         />
 
         <UsersCount>
-          {groups?.length}
+          {users?.length}
         </UsersCount>
       </HeaderList>
+
+      <FlatList 
+        data={users}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <UserCard name={item} onRemove={() => console.log(item)} />
+        )}
+        ListEmptyComponent={() => (
+          <ListEmpty 
+            message="Não há pessoas neste time."
+          /> 
+        )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          { paddingBottom: 100 },
+          users.length === 0 && { flex: 1 }
+        ]}
+      />
+
+      <Button 
+        title="Remover Grupo"
+        type="SECONDARY"
+      />
 
     </Container>
   );
