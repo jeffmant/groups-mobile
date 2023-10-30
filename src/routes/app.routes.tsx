@@ -1,5 +1,5 @@
-import { NewGroup } from '@components/NewGroup'
-import { Users } from '@components/Users'
+import { NewGroup } from '@screens/NewGroup'
+import { Users } from '@screens/Users'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Groups } from '@screens/Groups'
 

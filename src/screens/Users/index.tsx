@@ -9,11 +9,18 @@ import { useState } from "react";
 import { UserCard } from "@components/UserCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
+import { useRoute } from "@react-navigation/native";
 
+type RouteParams = {
+  group: string;
+}
 
 export function Users () {
   const [groups, setGroups] = useState(['Grupo A', 'Grupo B'])
   const [seletedGroup, setSelectedGroup] = useState(groups[0])
+
+  const route = useRoute()
+  const { group } = route.params as RouteParams; 
 
   const [users, setUsers] = useState([
     'Jefferson', 
@@ -24,7 +31,7 @@ export function Users () {
     <Container>
       <Header showBackButton />
 
-      <Highlight title="Nome do Grupo" subtitle="Adicione a galera" />
+      <Highlight title={group} subtitle="Adicione a galera" />
 
       <Form>
         <Input placeholder="Digite o nome da pessoa" autoCorrect={false} />
