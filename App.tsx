@@ -15,7 +15,7 @@ export default function App() {
         backgroundColor={'transparent'}
         translucent
       />
-      { !fontsLeaded ? <Groups /> : <Loading />}
+      { fontsLeaded ? <Groups /> : <Loading />}
     </ThemeProvider>
   );
 }
