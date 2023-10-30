@@ -1,11 +1,11 @@
 import { TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
+import styled, { css } from "styled-components/native";
 
 export type ButtonTypeProps = 'PRIMARY' | 'SECONDARY'
 
 type ButtonProps = {
   type: ButtonTypeProps
-}
+};
 
 export const Container = styled(TouchableOpacity)<ButtonProps>`
   flex: 1;
@@ -23,12 +23,14 @@ export const Container = styled(TouchableOpacity)<ButtonProps>`
 
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const Title = styled.Text`
-  font-size: ${({ theme }) => theme.FONT_SIZE.MD}px;
-  color: ${({ theme }) => theme.COLORS.WHITE};
-  font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
+  ${({ theme }) => css`
+    font-size: ${theme.FONT_SIZE.MD}px;
+    color: ${theme.COLORS.WHITE};
+    font-family: ${theme.FONT_FAMILY.BOLD};
 
-  text-transform: uppercase;
-`
+    text-transform: uppercase;
+  `};
+`;
