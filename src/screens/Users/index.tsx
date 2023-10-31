@@ -4,8 +4,8 @@ import { Highlight } from "@components/Highlight";
 import { ButtonIcon } from "@components/ButtonIcon";
 import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
-import { Alert, FlatList } from "react-native";
-import { useCallback, useState } from "react";
+import { Alert, FlatList, TextInput } from "react-native";
+import { useCallback, useRef, useState } from "react";
 import { UserCard } from "@components/UserCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
@@ -19,6 +19,7 @@ type RouteParams = {
 }
 
 export function Users () {
+  const inputRef = useRef<TextInput>(null)
   const { navigate } = useNavigation()
   const [teams, setTeams] = useState(['Time 1', 'Time 2'])
   const [selectedTeam, setSelectedTeam] = useState(teams[0])
@@ -39,6 +40,9 @@ export function Users () {
       await createUserToGroup({ name: newUserName, team: selectedTeam }, group)
 
       setNewUserName('')
+      
+      inputRef.current?.blur()
+      
       await fetchUsers()
       
     } catch (error) {
@@ -107,7 +111,9 @@ export function Users () {
           placeholder="Digite o nome da pessoa" 
           value={newUserName}
           onChangeText={setNewUserName}
-          autoCorrect={false} 
+          autoCorrect={false}
+          inputRef={inputRef}
+          onSubmitEditing={handleAddUser}
         />
         <ButtonIcon icon="add" onPress={handleAddUser}  />
       </Form>

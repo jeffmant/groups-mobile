@@ -104,7 +104,7 @@ export function Groups() {
     />
 
   {
-    groups?.length > 0 ? (
+    groups?.length > 1 ? (
       <Button 
         title='Excluir todos grupos' 
         type='SECONDARY'
