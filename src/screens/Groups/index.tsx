@@ -7,7 +7,7 @@ import { Alert, FlatList } from 'react-native';
 import { ListEmpty } from '@components/ListEmpty';
 import { Button } from '@components/Button';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getAllGroups, deleteGroupByName } from '@storage/group';
+import { getAllGroups, deleteGroupByName, deleteAllGroups } from '@storage/group';
 
 export function Groups() {
   const [groups, setGroups] = useState<string[]>([])
@@ -39,6 +39,26 @@ export function Groups() {
     } catch (error) {
       
     }
+  }
+
+  async function handleDeleteAllGroups () {
+    try {
+      if (groups.length > 0) {
+        Alert.alert('Deletar tudo', 'Deseja realmente deletar todos os grupos?', [
+          {
+            text: 'Cancelar',
+            style: 'cancel'
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await deleteAllGroups()
+              setGroups([])
+            }
+          }
+        ])
+      }
+    } catch (error) {}
   }
 
   async function fetchGroups () {
@@ -81,6 +101,12 @@ export function Groups() {
       title='Criar novo Grupo' 
       type='PRIMARY'
       onPress={handleNewGroup} 
+    />
+
+    <Button 
+      title='Excluir todos grupos' 
+      type='SECONDARY'
+      onPress={handleDeleteAllGroups} 
     />
 
     </Container>
