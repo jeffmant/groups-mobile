@@ -5,14 +5,27 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { createGroup } from "@storage/group";
+import { AppError } from "@utils/AppError";
+import { Alert } from "react-native";
 
 export function NewGroup () {
   const { navigate } = useNavigation()
 
   const [groupName, setGroupName] = useState('')
 
-  function handleCreate () {
-    navigate('users', { group: groupName })
+  async function handleCreate () {
+    try {
+      await createGroup(groupName) 
+      setGroupName('')
+      navigate('users', { group: groupName })
+    } catch (error) { 
+      if (error instanceof AppError) {
+        Alert.alert('Novo Grupo', error.message)
+      } else {
+        Alert.alert('Novo Grupo', 'Não foi possível criar um novo grupo')
+      }
+    }
   }
 
   return (
@@ -31,7 +44,7 @@ export function NewGroup () {
           onChangeText={setGroupName}
         />
 
-        <Button title="Criar" onPress={handleCreate} />
+        <Button title="Criar" onPress={handleCreate} disabled={!groupName?.length} />
       </Content>
     </Container>
   )
