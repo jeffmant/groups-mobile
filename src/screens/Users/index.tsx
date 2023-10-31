@@ -4,28 +4,71 @@ import { Highlight } from "@components/Highlight";
 import { ButtonIcon } from "@components/ButtonIcon";
 import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
-import { FlatList } from "react-native";
-import { useState } from "react";
+import { Alert, FlatList } from "react-native";
+import { useCallback, useState } from "react";
 import { UserCard } from "@components/UserCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { UserStorageDTO, createUserToGroup, deleteUserByGroup, getUserByGroup } from "@storage/user";
+import { AppError } from "@utils/AppError";
 
 type RouteParams = {
   group: string;
 }
 
 export function Users () {
-  const [groups, setGroups] = useState(['Grupo A', 'Grupo B'])
-  const [seletedGroup, setSelectedGroup] = useState(groups[0])
+  const [teams, setTeams] = useState(['Time 1', 'Time 2'])
+  const [selectedTeam, setSelectedTeam] = useState(teams[0])
+
+  const [users, setUsers] = useState<UserStorageDTO[]>([])
+  const [newUserName, setNewUserName] = useState('')
 
   const route = useRoute()
   const { group } = route.params as RouteParams; 
 
-  const [users, setUsers] = useState([
-    'Jefferson', 
-    'Gabriel',
-  ])
+
+  async function handleAddUser () {
+    if(newUserName.trim().length === 0){
+      return Alert.alert('Nova pessoa', 'Digite o nome da Pessoa.')
+    }
+
+    try {
+      await createUserToGroup({ name: newUserName, team: selectedTeam }, group)
+
+      setNewUserName('')
+      await fetchUsers()
+      
+    } catch (error) {
+      Alert.alert(
+        'Criar Usuéario',
+        error instanceof AppError ? error.message : 'Não foi possível criar usuário.'
+      )
+    }
+  }
+
+  async function handleDeleteUser (userName: string) {
+    try {
+      await deleteUserByGroup(group, userName)
+      await fetchUsers()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function fetchUsers () {
+    try {
+      const data = await getUserByGroup(group)
+      setUsers(data.filter((user) => user.team === selectedTeam))
+      
+    } catch (error) {
+      
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    fetchUsers()
+  }, [selectedTeam]))
   
   return (
     <Container>
@@ -34,19 +77,24 @@ export function Users () {
       <Highlight title={group} subtitle="Adicione a galera" />
 
       <Form>
-        <Input placeholder="Digite o nome da pessoa" autoCorrect={false} />
-        <ButtonIcon icon="add" />
+        <Input 
+          placeholder="Digite o nome da pessoa" 
+          value={newUserName}
+          onChangeText={setNewUserName}
+          autoCorrect={false} 
+        />
+        <ButtonIcon icon="add" onPress={handleAddUser}  />
       </Form>
 
       <HeaderList>
         <FlatList
-          data={['Grupo A', 'Grupo B']}
+          data={teams}
           keyExtractor={item => item}
           renderItem={({ item }) => (
             <Filter 
               title={item}
-              isActive={item === seletedGroup}
-              onPress={() => setSelectedGroup(item)}
+              isActive={item === selectedTeam}
+              onPress={() => setSelectedTeam(item)}
             />
           )}
           horizontal={true}
@@ -60,9 +108,9 @@ export function Users () {
 
       <FlatList 
         data={users}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <UserCard name={item} onRemove={() => console.log(item)} />
+        keyExtractor={( user ) => user.name}
+        renderItem={({ item: user }) => (
+          <UserCard name={user.name} onRemove={() => handleDeleteUser(user.name)} />
         )}
         ListEmptyComponent={() => (
           <ListEmpty 
