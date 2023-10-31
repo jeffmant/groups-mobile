@@ -9,15 +9,17 @@ import { useCallback, useState } from "react";
 import { UserCard } from "@components/UserCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { UserStorageDTO, createUserToGroup, deleteUserByGroup, getUserByGroup } from "@storage/user";
 import { AppError } from "@utils/AppError";
+import { deleteGroupByName } from "@storage/group";
 
 type RouteParams = {
   group: string;
 }
 
 export function Users () {
+  const { navigate } = useNavigation()
   const [teams, setTeams] = useState(['Time 1', 'Time 2'])
   const [selectedTeam, setSelectedTeam] = useState(teams[0])
 
@@ -53,6 +55,30 @@ export function Users () {
       await fetchUsers()
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  async function handleDeleteGroup () {
+    try {
+      Alert.alert('Deletar Grupo', `Deseja deletar o grupo ${group}?`, [
+        {
+          text: 'Não',
+          style: 'cancel'
+        },
+        {
+          text: 'Sim',
+          onPress: async () => {
+            try {
+              await deleteGroupByName(group)
+              navigate('groups')
+            } catch (error) {
+              Alert.alert('Ops!', ' Não foi possível excluir o grupo')
+            }
+          }
+        }
+      ])
+    } catch (error) {
+      
     }
   }
 
@@ -127,6 +153,7 @@ export function Users () {
       <Button 
         title="Remover Grupo"
         type="SECONDARY"
+        onPress={handleDeleteGroup}
       />
 
     </Container>
