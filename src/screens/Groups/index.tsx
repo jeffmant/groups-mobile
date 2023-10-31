@@ -103,11 +103,16 @@ export function Groups() {
       onPress={handleNewGroup} 
     />
 
-    <Button 
-      title='Excluir todos grupos' 
-      type='SECONDARY'
-      onPress={handleDeleteAllGroups} 
-    />
+  {
+    groups?.length > 0 ? (
+      <Button 
+        title='Excluir todos grupos' 
+        type='SECONDARY'
+        onPress={handleDeleteAllGroups} 
+      />
+      )
+      : null
+  }
 
     </Container>
   );
